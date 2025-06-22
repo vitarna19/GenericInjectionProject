@@ -1,7 +1,7 @@
 name: Full Data Pipeline Scheduler
 
 on:
-  push:   # Runs on every code push
+  push:
   schedule:
     - cron: '30 18 * * *'  # 12:00 AM IST
     - cron: '30 6 * * *'   # 12:00 PM IST
@@ -29,3 +29,18 @@ jobs:
 
       - name: Run DB to ADLS pipeline
         run: python db_to_adls_pipeline.py
+
+      - name: Upload Customer JSON
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: customers-data
+          path: adls/customers.json
+
+      - name: Upload Product JSON
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: products-data
+          path: adls/products.json
+
