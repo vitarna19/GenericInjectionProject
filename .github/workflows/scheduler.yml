@@ -1,0 +1,21 @@
+name: Country Data Scheduler
+on:
+  push:     # Add this line to trigger on push
+  schedule:
+    - cron: '30 18 * * *'
+    - cron: '30 6 * * *'
+
+jobs:
+  fetch_data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Run fetch script
+        run: python country_fetcher.py
