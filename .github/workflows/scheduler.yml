@@ -32,15 +32,14 @@ jobs:
 
       - name: Upload Customer JSON
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: customers-data
           path: adls/customers.json
 
       - name: Upload Product JSON
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: products-data
           path: adls/products.json
-
