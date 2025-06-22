@@ -1,17 +1,17 @@
-name: Country Data Scheduler
+name: Full Data Pipeline Scheduler
 
 on:
-  push:
+  push:   # Runs on every code push
   schedule:
-    - cron: '30 18 * * *'
-    - cron: '30 6 * * *'
+    - cron: '30 18 * * *'  # 12:00 AM IST
+    - cron: '30 6 * * *'   # 12:00 PM IST
 
 jobs:
-  fetch_data:
+  run_data_pipeline:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Setup Python
@@ -24,5 +24,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run fetch script
+      - name: Run Country Fetcher
         run: python country_fetcher.py
+
+      - name: Run DB to ADLS pipeline
+        run: python db_to_adls_pipeline.py
