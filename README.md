@@ -1,51 +1,35 @@
-Project Overview
-This project demonstrates a generic and automated continuous data ingestion pipeline. It simulates ingesting data from both external APIs and a relational database, applying conditions to trigger workflows, and saving results in a cloud-like structure. The whole pipeline is orchestrated using GitHub Actions to simulate a Databricks or ADF-like production flow.
+#Generic Continuous Data Ingestion from Multiple Streaming Sources into Databricks (Simulated)
+#Project Overview
+This project demonstrates a generic and automated continuous data ingestion pipeline. It simulates ingesting data from both external APIs and a relational database, applies conditional logic to trigger workflows, and stores results in a cloud-like folder structure. The entire workflow is orchestrated using GitHub Actions to simulate a real-world Databricks or Azure Data Factory (ADF) pipeline.
 
-Features
-Scheduled REST API Ingestion
-Fetches country data (India, US, UK, China, Russia) from a public API and stores it as JSON files twice a day.
+#Features
+1- Scheduled REST API IngestionFetches data for 5 countries (India, US, UK, China, Russia) from a public API and saves them as JSON files.
+2- Conditional Database Ingestion copies customer data from a local SQLite database only if the record count is greater than 500.
+3- Parent-Child Pipeline Logic if the customer count exceeds 600, a child pipeline is triggered to ingest product data.
+4- Simulated Data Lake (ADLS)Stores output files in a local folder adls/, simulating Azure Data Lake Storage.
+5- GitHub Actions Automation all ingestion workflows are automatically run via GitHub Actions at 12:00 AM and 12:00 PM IST.
+6- Artifact Uploads JSON output files are uploaded as downloadable artifacts from each GitHub Actions run.
 
-Conditional Database Ingestion
-Copies customer data from a mock SQLite database only if the count > 500.
+#Architecture Diagram
+GitHub Actions Scheduler (runs 2x daily)
+            |
+            v
+  [country_fetcher.py]
+    - Fetches data for 5 countries from REST API
+    - Saves JSON to adls/
+            |
+            v
+  [db_to_adls_pipeline.py]
+    - Checks customer count from DB
+    - Saves data if count > 500
+    - If count > 600 → triggers child pipeline
+            |
+            v
+  [product_pipeline.py]
+    - Receives customer count as parameter
+    - Saves product data to adls/
 
-Parent-Child Pipeline Architecture
-If customer count > 600, it triggers a child pipeline to ingest product data.
-
-Simulated Data Lake (ADLS)
-Stores outputs in a local adls/ folder to mimic Azure Data Lake Storage.
-
-GitHub Actions Automation
-Entire workflow is automated via GitHub Actions on a schedule (12:00 AM & 12:00 PM IST).
-
-Artifact Uploads
-JSON outputs are uploaded as downloadable artifacts on every pipeline run.
-
-Architecture Diagram
-                    ┌────────────────────────┐
-                    │ GitHub Actions Scheduler│
-                    │ (Runs 2x daily)        │
-                    └──────────┬─────────────┘
-                               │
-       ┌───────────────────────▼────────────────────────┐
-       │          country_fetcher.py                    │
-       │ Fetches 5 countries' data from REST API        │
-       └───────────────────────┬────────────────────────┘
-                               │
-                               ▼
-       ┌────────────────────────────────────────────┐
-       │      db_to_adls_pipeline.py (parent)       │
-       │ - Check customer count from SQLite DB      │
-       │ - Save as customers.json if > 500          │
-       │ - Trigger child pipeline if count > 600    │
-       └───────────────────────┬────────────────────┘
-                               │
-                               ▼
-         ┌─────────────────────────────────────┐
-         │        product_pipeline.py (child)  │
-         │ Receives customer count as param    │
-         │ Ingests products if count > 600     │
-         └─────────────────────────────────────┘
-🗂 Folder Structure
+#Folder Structure
 project/
 ├── adls/
 │   ├── customers.json
@@ -59,51 +43,39 @@ project/
     └── workflows/
         └── scheduler.yml
 
-
-        
-Setup & Run Locally
-1. Clone the repo
-bash
-Copy code
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+#Setup & Run Locally
+1. Clone the repository
+git clone https://github.com/vitarna19/GenericInjectionProject.git
+cd GenericInjectionProject
 2. Install dependencies
-bash
-Copy code
 pip install -r requirements.txt
-3. Setup SQLite database
-bash
-Copy code
+3. Set up SQLite database
 python db_setup.py
-4. Run pipelines manually (optional)
-bash
-Copy code
+-This will create a sample customers and products table with dummy data.
+4. Run pipelines manually (for testing)
 python country_fetcher.py
 python db_to_adls_pipeline.py
+-country_fetcher.py fetches country data and stores it as JSON files.
+-db_to_adls_pipeline.py checks customer count and:
+  -Writes customer data if count > 500
+  -Triggers product pipeline if count > 600
 
-GitHub Automation
-Runs twice daily at 12:00 AM and 12:00 PM IST
+#GitHub Automation
+Runs automatically every day at:
+12:00 AM IST
+12:00 PM IST
+View execution logs in the Actions tab of your GitHub repository.
+Download outputs (customers.json, products.json) from the workflow artifacts section.
 
-See your runs under the Actions tab in your GitHub repo
-
-Download customers.json and products.json from workflow artifacts
-
-Tech Stack
+#Tech Stack
 Python 3.10
+SQLite (mock DB)
+GitHub Actions (workflow scheduler)
+REST APIs (country data source)
+JSON (for all output files)
+Command-line parameter passing (simulates ADF/Databricks-style workflow)
 
-SQLite (simulated DB)
-
-GitHub Actions (orchestration)
-
-REST APIs (public)
-
-JSON (simulated data lake)
-
-CLI-style parameter passing (like Databricks/ADF)
-
-Author
+#Author
 Name: Vitarna Sharma
-
 Role: Data Engineer Intern
-
-Project: Internship: Generic Continuous Data Ingestion
+Project: Celebal Summer Internship — Generic Continuous Data Ingestion
