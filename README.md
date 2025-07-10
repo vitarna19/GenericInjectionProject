@@ -1,4 +1,4 @@
-# Generic Continuous Data Ingestion from Multiple Streaming Sources into Databricks (Simulated)
+# Generic Continuous Data Ingestion from Multiple Streaming Sources into Databricks
 
 ## Project Overview
 
