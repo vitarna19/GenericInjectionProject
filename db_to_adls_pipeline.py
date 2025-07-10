@@ -18,10 +18,10 @@ def copy_customer_data():
         os.makedirs("adls", exist_ok=True)
         with open("adls/customers.json", "w") as f:
             json.dump(rows, f)
-        print("✅ Customer data copied to ADLS (simulated)")
+        print("Customer data copied to ADLS (simulated)")
 
         if count > 600:
-            print("📦 Triggering child product pipeline...")
+            print("Triggering child product pipeline...")
             subprocess.run(["python", "product_pipeline.py", str(count)])
 
     conn.close()
