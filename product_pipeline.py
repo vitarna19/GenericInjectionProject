@@ -17,11 +17,11 @@ def copy_product_data(customer_count):
     with open("adls/products.json", "w") as f:
         json.dump(rows, f)
 
-    print(f"✅ Copied {len(rows)} products because customer count was {customer_count}.")
+    print(f"Copied {len(rows)} products because customer count was {customer_count}.")
     conn.close()
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         copy_product_data(sys.argv[1])
     else:
-        print("❌ No customer count passed to product pipeline.")
+        print("No customer count passed to product pipeline.")
